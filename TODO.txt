@@ -1,0 +1,97 @@
+========VARIABLES AND DATA TYPES========
+All variables may have every possible data type, unless specified.
+
+The following piece of code is correct, if A's data type is not specified.
+A is 5
+A is like ciao
+A is empty
+
+The supported data types are:
+boolean
+integer
+rational
+real
+number (both integer and real)
+character
+word (an ordered set of characters without spaces/blank characters)
+text (a word with every character allowed)
+class (the most generic data type: unlimited size, unlimited repeatitions allowed, every data type is allowed)
+set  (a class without repeatitions)
+ordered set (a set in which )
+
+=====SET=====
+A set is the only data structure existing in this language and it
+is equivalent to the mathematical concept of "set".
+It represents a group of elements.
+These elements can be of different types, unless specified.
+
+For example:
+A is empty               -->  A is an empty set
+A is a set of numbers    -->  A is an empty set that can contain only numbers
+A is a set of sets       -->  A is an empty set that can contain only sets
+
+By default, there can be no repetitions inside it.
+However, its behavior can be modified.
+For example:
+A is a set with repeatitions   -->  unlimited repeatitions permitted
+A is a set with 2 repeatitions  --> max 2 repeatitions per element
+
+By default, a set is unlimited.
+However, a fixed size can be specified.
+For example:
+A is a set with max n elements
+
+===OPERATIONS ON SETS===
+All mathematical operations on sets will be available.
+Union
+Intersection
+complementary (?)
+difference
+differenza simmetrica (unione meno intersezione)
+
+
+=========ISTRUZIONI=========
+interprete            C
+A is B          -->   A=B;
+A is like B     -->   A="B";
+square A        -->   A=A*A;
+					Dichiarazione di una funzione
+the function name wants A, a number and gives B and a word    -->  (<type> B, word) name (<type> A, number)
+the function random gives a double    -->   double random(void)
+the function print wants a text     -->    void print(char* str)
+					Invocazione di una funzione
+get C from name with A and B   ???
+		LOOP
+for 10 times do       --> for(int i=0; i<10; i++)
+		ITERATION
+for each A in S        --> iterates through S, the element of each iteration is called A
+for each real A in S   --> iterates only through elements of S whose data type is real,
+                           the element of each iteration is called A
+        CONDITION
+if <condition>       -->  if(<condition>) {}
+if <condition> else   --> if(<condition>) {} else {}
+
+
+=========KEYWORD=========
+"it"  -->  equivale all'ultima variabile utilizzata,
+           cioè l'ultima che si è trovata a sinistra di un operazione
+           esempio:
+           a is 5
+           square it
+"with"   -->  per aggiungere proprietà agli elementi
+              esempio: la dichiarazione di un set
+"now"   -->  per modificare proprietà di elementi
+			 esempio:
+			 a is a set of numbers     
+			 a is now a set of reals
+"end"   -->  to end the closest "scope" in a line that is not its last
+             a scope is one of "program", function or loop
+"end <function_name>"   --> to end a function in a line that is not its last
+                            "program" is a keyword that represents the current program
+"true" "false"  --> valori booleani
+"empty"   -->  equivale all'insieme vuoto o ad una stringa vuota
+"zero"    -->  si traduce nello zero del tipo di "number" utilizzato
+"+infinity" or "positive infinity"   -->  si traduce nell'infinito positivo del tipo di "number" utilizzato
+"-infinity" or "negative infinity"   -->  si traduce nell'infinito negativo del tipo di "number" utilizzato
+"universe" or "the universe"        -->  si traduce nell'insieme che contiene tutti i possibili elementi
+                                         del tipo di dato utilizzato
