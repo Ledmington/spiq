@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'antlr'
     id 'application'
+    id 'jacoco'
 }
 
 group 'org.example'
@@ -19,12 +20,16 @@ dependencies {
     antlr 'org.antlr:antlr4:4.10.1'
 }
 
+tasks.withType(JavaCompile) {
+    options.release = 17
+}
+
 test {
     useJUnitPlatform()
 }
 
 application {
-    mainClass = 'org.example.Main'
+    mainClass = 'Main'
 }
 
 generateGrammarSource {
@@ -38,3 +43,11 @@ task customClean(type: Delete) {
     delete "src/main/java/gen"
 }
 clean.dependsOn customClean
+
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
