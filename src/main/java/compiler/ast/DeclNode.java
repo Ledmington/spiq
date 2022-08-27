@@ -1,5 +1,6 @@
 package compiler.ast;
 
+import compiler.ast.numbers.NumberNode;
 import gen.spiqBaseVisitor;
 
 public class DeclNode extends Node {

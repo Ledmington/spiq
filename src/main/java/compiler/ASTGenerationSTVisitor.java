@@ -2,14 +2,21 @@ package compiler;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.math.BigInteger;
 
 import compiler.ast.DeclNode;
 import compiler.ast.IdNode;
 import compiler.ast.Node;
-import compiler.ast.NumberNode;
 import compiler.ast.ProgBodyNode;
+import compiler.ast.numbers.FractionNode;
+import compiler.ast.numbers.IntegerNode;
+import compiler.ast.numbers.NumberNode;
+import compiler.ast.numbers.RealNode;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+
+import com.ibm.icu.math.BigDecimal;
 
 import gen.spiqBaseVisitor;
 import gen.spiqParser.DeclContext;
@@ -94,15 +101,20 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
         }
 
         if (c.integer() != null) {
-            System.out.println("integer: " + c.integer().getText());
-        }
-        if (c.fraction() != null) {
-            System.out.println("fraction: " + c.fraction().getText());
-        }
-        if (c.real() != null) {
-            System.out.println("real: " + c.real().getText());
+            return new IntegerNode(new BigInteger(sign + c.integer().getText()));
         }
 
-        return new NumberNode(); // TODO fix
+        if (c.fraction() != null) {
+            return new FractionNode(
+                    new BigInteger(sign + c.fraction().num.getText()),
+                    new BigInteger(c.fraction().den.getText()));
+        }
+
+        if (c.real() != null) {
+            System.out.println("real: " + c.real().getText());
+            return new RealNode(new BigDecimal(sign + c.real().getText()));
+        }
+
+        throw new IllegalArgumentException("What kind of number is this \"" + c.getText() + "\"");
     }
 }

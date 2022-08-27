@@ -16,26 +16,25 @@ decl : ID IS number ;
 
 number   : sign? ( integer | fraction | real ) ;
 sign     : PLUS | MINUS ;
-integer  : ZERO | NON_ZERO_DIGIT DIGIT* ;
-fraction : integer SLASH integer ;
+integer  : DIGIT+ ;
+fraction : num=integer SLASH den=integer ;
 real     : integer DOT integer #normalForm
-         | DIGIT (DOT DIGIT+)? 'e' sign? integer #exponentialForm
+         | DIGIT (DOT integer)? EXP sign? integer #exponentialForm
          ;
 
 IS : 'is';
 
 PLUS  : '+';
 MINUS : '-';
-DOT   : '.';
 SLASH : '/';
+DOT   : '.';
+EXP   : 'e';
 
-ZERO  : '0' ;
 DIGIT : ( '0'..'9' ) ;
-NON_ZERO_DIGIT : ('1'..'9') ;
 
 ID       : ('a'..'z' | 'A'..'Z')+ ;
 WHITESP  : ( '\t' | ' ' | '\r' | '\n' )+  -> channel(HIDDEN) ;
-COMMENT  : '/*' .*? '*/' -> channel(HIDDEN) ;
+//COMMENT  : '/*' .*? '*/' -> channel(HIDDEN) ;
 ERR   	 : . {
     System.out.println("Invalid char: " + getText() + " at line " + getLine());
     lexicalErrors++;

@@ -30,7 +30,8 @@ public class Main {
 		System.out.println("Reading \"" + filename + "\"");
 
 		try {
-			SpiqCompiler.getInstance().compile(CharStreams.fromFileName(filename));
+			final SpiqCompiler compiler = new SpiqCompiler();
+			compiler.compile(CharStreams.fromFileName(filename));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
