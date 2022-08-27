@@ -5,7 +5,7 @@ plugins {
     id 'jacoco'
 }
 
-group 'org.example'
+group 'org.spiq'
 version '1.0-SNAPSHOT'
 
 repositories {

@@ -1,4 +1,4 @@
-package compiler;
+package compiler.ast;
 
 import gen.spiqBaseVisitor;
 

@@ -10,16 +10,16 @@ grammar spiq;
 
 prog : progbody EOF;
 
-progbody : decl+ ;
+progbody : (decl DOT)+ ;
 
 decl : ID IS number ;
 
-number   : sign? ( integer | real | fraction ) ;
+number   : sign? ( integer | fraction | real ) ;
 sign     : PLUS | MINUS ;
 integer  : ZERO | NON_ZERO_DIGIT DIGIT* ;
 fraction : integer SLASH integer ;
 real     : integer DOT integer #normalForm
-         | DIGIT DOT DIGIT+ 'e' sign? integer #exponentialForm
+         | DIGIT (DOT DIGIT+)? 'e' sign? integer #exponentialForm
          ;
 
 IS : 'is';

@@ -1,4 +1,6 @@
-package compiler;
+package compiler.ast;
+
+import compiler.Visitable;
 
 public abstract class Node implements Visitable {
 
