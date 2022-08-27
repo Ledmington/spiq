@@ -2,6 +2,9 @@ package compiler;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.management.relation.RoleList;
+
 import java.math.BigInteger;
 
 import compiler.ast.DeclNode;
@@ -20,9 +23,11 @@ import com.ibm.icu.math.BigDecimal;
 
 import gen.spiqBaseVisitor;
 import gen.spiqParser.DeclContext;
-import gen.spiqParser.NumberContext;
+import gen.spiqParser.NumberDeclarationContext;
 import gen.spiqParser.ProgContext;
 import gen.spiqParser.ProgbodyContext;
+import gen.spiqParser.WithValueDeclarationContext;
+import gen.spiqParser.WithoutValueDeclarationContext;
 
 public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
 
@@ -83,19 +88,55 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
         if (debug) {
             printVarAndProdName(c);
         }
+
         return new DeclNode(
                 new IdNode(c.ID().getText()), // (IdNode) visit(c.ID()), // TODO solve this
-                (NumberNode) visit(c.number()));
+                (NumberNode) visit(c.numberDeclaration()));
     }
 
     @Override
-    public Node visitNumber(final NumberContext c) {
+    public Node visitNumberDeclaration(final NumberDeclarationContext c) {
+        if (debug) {
+            printVarAndProdName(c);
+        }
+
+        if (c.withValueDeclaration() != null) {
+            return visit(c.withValueDeclaration());
+        }
+        if (c.withoutValueDeclaration() != null) {
+            return visit(c.withoutValueDeclaration());
+        }
+
+        throw new IllegalArgumentException("What kind of number declaration is \"" + c.getText() + "\"?");
+    }
+
+    @Override
+    public Node visitWithoutValueDeclaration(final WithoutValueDeclarationContext c) {
+        if (debug) {
+            printVarAndProdName(c);
+        }
+
+        if (c.INTEGER() != null) {
+            return new IntegerNode(new BigInteger("0"));
+        }
+        if (c.FRACTION() != null || c.RATIONAL() != null) {
+            return new FractionNode(new BigInteger("0"), new BigInteger("1"));
+        }
+        if (c.REAL() != null || c.NUMBER() != null) {
+            return new RealNode(new BigDecimal("0.0"));
+        }
+
+        throw new IllegalArgumentException("What kind of number declaration is \"" + c.getText() + "\"?");
+    }
+
+    @Override
+    public Node visitWithValueDeclaration(final WithValueDeclarationContext c) {
         if (debug) {
             printVarAndProdName(c);
         }
 
         String sign = "";
-        if (c.sign() != null && c.sign().getText().equals("-")) {
+        if (c.SIGN() != null && c.SIGN().getText().equals("-")) {
             // negative number
             sign = "-";
         }
@@ -115,6 +156,6 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
             return new RealNode(new BigDecimal(sign + c.real().getText()));
         }
 
-        throw new IllegalArgumentException("What kind of number is this \"" + c.getText() + "\"");
+        throw new IllegalArgumentException("What kind of number is \"" + c.getText() + "\"?");
     }
 }

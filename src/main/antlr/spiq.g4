@@ -12,23 +12,33 @@ prog : progbody EOF;
 
 progbody : (decl DOT)+ ;
 
-decl : ID IS number ;
+decl : ID IS numberDeclaration ;
 
-number   : sign? ( integer | fraction | real ) ;
-sign     : PLUS | MINUS ;
+numberDeclaration       : withoutValueDeclaration | withValueDeclaration ;
+withoutValueDeclaration : A ( NUMBER | FRACTION | RATIONAL | REAL)
+                        | AN INTEGER ;
+withValueDeclaration    : SIGN? ( integer | fraction | real ) ;
 integer  : DIGIT+ ;
 fraction : num=integer SLASH den=integer ;
 real     : integer DOT integer #normalForm
-         | DIGIT (DOT integer)? EXP sign? integer #exponentialForm
+         | DIGIT (DOT integer)? EXP SIGN? integer #exponentialForm
          ;
 
 IS : 'is';
 
+SIGN  : PLUS | MINUS ;
 PLUS  : '+';
 MINUS : '-';
 SLASH : '/';
 DOT   : '.';
 EXP   : 'e';
+A     : 'a';
+AN    : 'an';
+INTEGER  : 'integer';
+NUMBER   : 'number';
+FRACTION : 'fraction';
+RATIONAL : 'rational';
+REAL     : 'real';
 
 DIGIT : ( '0'..'9' ) ;
 
