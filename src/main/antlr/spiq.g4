@@ -15,13 +15,13 @@ progbody : (decl DOT)+ ;
 decl : ID IS numberDeclaration ;
 
 numberDeclaration       : withoutValueDeclaration | withValueDeclaration ;
-withoutValueDeclaration : A ( NUMBER | FRACTION | RATIONAL | REAL)
+withoutValueDeclaration : A ( NUMBER | FRACTION | RATIONAL | REAL )
                         | AN INTEGER ;
 withValueDeclaration    : SIGN? ( integer | fraction | real ) ;
 integer  : DIGIT+ ;
 fraction : num=integer SLASH den=integer ;
 real     : integer DOT integer #normalForm
-         | DIGIT (DOT integer)? EXP SIGN? integer #exponentialForm
+         | DIGIT (DOT DIGIT+)? EXP SIGN? integer #exponentialForm
          ;
 
 IS : 'is';
