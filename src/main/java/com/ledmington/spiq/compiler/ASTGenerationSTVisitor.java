@@ -1,25 +1,30 @@
-package compiler;
+/*
+ * Copyright (C) 2022-2022 Filippo Barbari <filippo.barbari@gmail.com>
+ *
+ * This file is part of spiq.
+ *
+ * spiq can not be copied and/or distributed without
+ * the express permission of Filippo Barbari.
+ */
+package com.ledmington.spiq.compiler;
 
+import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.management.relation.RoleList;
-
-import java.math.BigInteger;
-
-import compiler.ast.DeclNode;
-import compiler.ast.IdNode;
-import compiler.ast.Node;
-import compiler.ast.ProgBodyNode;
-import compiler.ast.numbers.FractionNode;
-import compiler.ast.numbers.IntegerNode;
-import compiler.ast.numbers.NumberNode;
-import compiler.ast.numbers.RealNode;
+import com.ibm.icu.math.BigDecimal;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.ibm.icu.math.BigDecimal;
+import com.ledmington.spiq.compiler.ast.DeclNode;
+import com.ledmington.spiq.compiler.ast.IdNode;
+import com.ledmington.spiq.compiler.ast.Node;
+import com.ledmington.spiq.compiler.ast.ProgBodyNode;
+import com.ledmington.spiq.compiler.ast.numbers.FractionNode;
+import com.ledmington.spiq.compiler.ast.numbers.IntegerNode;
+import com.ledmington.spiq.compiler.ast.numbers.NumberNode;
+import com.ledmington.spiq.compiler.ast.numbers.RealNode;
 
 import gen.spiqBaseVisitor;
 import gen.spiqParser.DeclContext;
@@ -39,7 +44,7 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
     private void printVarAndProdName(ParserRuleContext ctx) {
         String prefix = "";
         Class<?> ctxClass = ctx.getClass(), parentClass = ctxClass.getSuperclass();
-        if (!parentClass.equals(ParserRuleContext.class)) {// parentClass is the var context (and not ctxClass itself)
+        if (!parentClass.equals(ParserRuleContext.class)) { // parentClass is the var context (and not ctxClass itself)
             prefix = CompilerUtils.lowerizeFirstChar(CompilerUtils.extractCtxName(parentClass.getName()))
                     + ": production #";
         }

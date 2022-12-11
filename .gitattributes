@@ -1,1 +1,5 @@
 * text=auto eol=lf
+*.bat text eol=crlf
+
+*.java text
+*.g4 text

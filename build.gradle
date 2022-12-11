@@ -1,53 +1,214 @@
+import java.awt.Desktop
+
 plugins {
-    id 'java'
-    id 'antlr'
-    id 'application'
-    id 'jacoco'
+	id 'java'
+	id 'antlr'
+	id 'application'
+	id 'jacoco'
+	id 'com.adarshr.test-logger' version '3.2.0' // for pretty test logs
+	id 'com.diffplug.spotless' version '6.12.0' // for code formatting
+	id 'com.github.ben-manes.versions' version '0.44.0' // for checking latest version of gradle, gradle plugins and dependencies
+	id 'de.undercouch.download' version '5.3.0' // for downloading files in tasks
 }
 
-group 'org.spiq'
-version '1.0-SNAPSHOT'
+group 'com.ledmington.spiq'
+version '0.1.0'
+description 'spiq interpreter'
+String author = 'Filippo Barbari'
+String authorMail = 'filippo.barbari@gmail.com'
+String appName = 'spiq'
+String appNameLowercase = 'spiq'
+
+java {
+	sourceCompatibility = '17'
+	targetCompatibility = '17'
+}
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+	// compile-time dependencies
+	antlr 'org.antlr:antlr4:4.11.1'
 
-    antlr 'org.antlr:antlr4:4.10.1'
+	// annotations
+	annotationProcessor 'com.google.dagger:dagger-compiler:2.44.2'
+
+	// testing stuff
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
+	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.1'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
 }
 
 tasks.withType(JavaCompile) {
-    options.release = 17
+	options.release = 17
+	options.compilerArgs << '-Xdiags:verbose'
+	options.compilerArgs << '-Xlint:unchecked'
+	options.compilerArgs << '-Xlint:deprecation'
+	options.deprecation = true
+	options.encoding = 'UTF-8'
 }
 
 test {
-    useJUnitPlatform()
+	useJUnitPlatform()
+	// failFast true
 }
 
 application {
-    mainClass = 'Main'
+	mainClass = 'Main'
 }
 
 generateGrammarSource {
-    outputDirectory = file("src/main/java/gen")
-    maxHeapSize = "64m"
-    arguments += ["-visitor", "-long-messages"]
+	outputDirectory = file("src/main/java/gen")
+	maxHeapSize = "64m"
+	arguments += ["-visitor", "-long-messages"]
 }
 
 task customClean(type: Delete) {
-    delete "src/main/antlr/.antlr"
-    delete "src/main/java/gen"
+	delete "src/main/antlr/.antlr"
+	delete "src/main/java/gen"
 }
 clean.dependsOn customClean
 
 test {
-    finalizedBy jacocoTestReport // report is always generated after tests run
+	finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
 jacocoTestReport {
-    dependsOn test // tests are required to run before generating the report
+	dependsOn test // tests are required to run before generating the report
+}
+
+testlogger {
+	theme 'standard'
+	// theme 'mocha'
+	// theme 'mocha-parallel'
+
+	showExceptions true
+	showStackTraces true
+	showFullStackTraces false
+	showCauses true
+
+	slowThreshold 2000
+
+	showSummary true
+	showSimpleNames false
+	showPassed true
+	showSkipped true
+	showFailed true
+	showOnlySlow false
+
+	showStandardStreams false
+	showPassedStandardStreams true
+	showSkippedStandardStreams true
+	showFailedStandardStreams true
+
+	logLevel 'lifecycle'
+}
+
+spotless {
+	// optional: limit format enforcement to just the files changed by this feature branch
+	//ratchetFrom 'origin/main'
+
+	format 'misc', {
+		target '*.gradle', '*.md', '.gitignore'
+		trimTrailingWhitespace()
+		indentWithTabs()
+		endWithNewline()
+		setEncoding('utf-8')
+	}
+
+	java {
+		target fileTree('.') {
+			include '**/*.java'
+			exclude '**/build/**', '**/build-*/**'
+		}
+		removeUnusedImports()
+		formatAnnotations()
+		trimTrailingWhitespace()
+		endWithNewline()
+		setEncoding('utf-8')
+		palantirJavaFormat('2.26.0')
+
+		// check https://javadoc.io/doc/com.diffplug.spotless/spotless-plugin-gradle/latest/com/diffplug/gradle/spotless/JavaExtension.html
+		importOrder('java', 'javax', 'javafx', 'com', 'org', group)
+
+		licenseHeader String.join("\n", "/*",
+		" * Copyright (C) 2022-${new Date().format('yyyy')} ${author} <${authorMail}>",
+		" *",
+		" * This file is part of ${appName}.",
+		" *",
+		" * ${appName} can not be copied and/or distributed without",
+		" * the express permission of ${author}.",
+		" */")
+	}
+}
+
+String fatJarName = "${buildDir}/libs/${appNameLowercase}-${version}.jar"
+task buildFatJar(type: Jar) {
+	group 'distribution'
+	description 'Builds the fat jar of the application'
+	from sourceSets.main.output
+	dependsOn configurations.runtimeClasspath
+	from {
+		configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+	}
+	duplicatesStrategy = 'include'
+	manifest {
+		archiveBaseName = appNameLowercase
+		attributes(
+			//"Implementation-Title": "Gradle",
+			"Implementation-Version": version,
+			"Main-Class": "$mainClassName"
+		)
+	}
+
+	doLast {
+		println "The fat jar is ${fatJarName}"
+		println String.format("Fat jar size: %.3f MB", new File(fatJarName).length() / 1_000_000)
+	}
+}
+
+tasks.compileJava.dependsOn(spotlessApply)
+
+wrapper {
+	gradleVersion = '7.6'
+}
+
+task doc(dependsOn: javadoc) {
+	group 'documentation'
+	description 'Generates Javadoc and opens it with the default browser'
+	doLast {
+		Desktop.desktop.browse "file://$buildDir/docs/javadoc/index.html".toURI()
+	}
+}
+
+task trello {
+	group 'useful'
+	description 'Opens the kanban board of the project in the default browser'
+	doLast {
+		Desktop.desktop.browse "https://cryptpad.fr/kanban/#/2/kanban/edit/NTAZkFvrST0+oX1PWtQ11nQ9/".toURI()
+	}
+}
+
+task downloadGitstats(type: Download) {
+	src "https://github.com/hoxu/gitstats/tarball/master"
+	dest new File(buildDir, "gitstats.tar.gz")
+	overwrite false
+}
+
+task downloadAndUnzipGitstats(dependsOn: downloadGitstats, type: Copy) {
+	from tarTree(downloadGitstats.dest)
+	into "${buildDir}/gitstats/"
+	includeEmptyDirs(false)
+}
+
+task gitstats(dependsOn: downloadAndUnzipGitstats, type: Exec) {
+	group 'useful'
+	description 'Creates a statistics report for the repository and shows it in the default browser.'
+	workingDir "${buildDir}/gitstats/hoxu-gitstats-55c5c28/"
+	commandLine('./gitstats', "${projectDir}", "${buildDir}/gitstats/report")
+	doLast {
+		Desktop.desktop.browse "file://$buildDir/gitstats/report/index.html".toURI()
+	}
 }
