@@ -36,9 +36,9 @@ public final class SpiqInterperter {
     }
 
     /**
-     * Compiles the given String.
+     * Executes the given String.
      * @param code
-     *      The spiq code to be compiled.
+     *      The spiq code to be interpreted.
      * @return
      *      The number of errors.
      */
@@ -53,7 +53,7 @@ public final class SpiqInterperter {
 
         final ParseTree st = parser.prog();
 
-        final ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(true); // use true to visualize the ST
+        final ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(vm, true); // use true to visualize the ST
         final Node ast = visitor.visit(st); // TODO fix unused "ast"
 
         return lexer.lexicalErrors;

@@ -24,6 +24,8 @@ import com.ledmington.spiq.interpreter.ast.numbers.FractionNode;
 import com.ledmington.spiq.interpreter.ast.numbers.IntegerNode;
 import com.ledmington.spiq.interpreter.ast.numbers.NumberNode;
 import com.ledmington.spiq.interpreter.ast.numbers.RealNode;
+import com.ledmington.spiq.interpreter.vm.SpiqVM;
+import com.ledmington.spiq.interpreter.vm.VariableType;
 
 import gen.spiqBaseVisitor;
 import gen.spiqParser.DeclContext;
@@ -33,20 +35,25 @@ import gen.spiqParser.ProgbodyContext;
 import gen.spiqParser.WithValueDeclarationContext;
 import gen.spiqParser.WithoutValueDeclarationContext;
 
+// TODO change name
 public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
 
     private static final String SINGLE_INDENTATION = "  "; // double space
 
     private String indent = "";
+    private String varName = null;
     private final boolean debug;
 
-    public ASTGenerationSTVisitor(final boolean debug) {
+    private final SpiqVM vm;
+
+    public ASTGenerationSTVisitor(final SpiqVM vm, final boolean debug) {
         super();
+        this.vm = vm;
         this.debug = debug;
     }
 
-    public ASTGenerationSTVisitor() {
-        this(true);
+    public ASTGenerationSTVisitor(final SpiqVM vm) {
+        this(vm, true);
     }
 
     private void printVarAndProdName(ParserRuleContext ctx) {
@@ -102,9 +109,13 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
             printVarAndProdName(c);
         }
 
-        return new DeclNode(
-                new IdNode(c.ID().getText()), // (IdNode) visit(c.ID()), // TODO solve this
+        varName = c.ID().getText();
+
+        final DeclNode result = new DeclNode(
+                new IdNode(varName), // (IdNode) visit(c.ID()), // TODO solve this
                 (NumberNode) visit(c.numberDeclaration()));
+        varName = null;
+        return result;
     }
 
     @Override
@@ -130,13 +141,20 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
         }
 
         if (c.INTEGER() != null) {
+            vm.newVariable(varName, VariableType.INTEGER);
             return new IntegerNode(new BigInteger("0"));
         }
         if (c.FRACTION() != null || c.RATIONAL() != null) {
+            vm.newVariable(varName, VariableType.RATIONAL);
             return new FractionNode(new BigInteger("0"), new BigInteger("1"));
         }
-        if (c.REAL() != null || c.NUMBER() != null) {
+        if (c.REAL() != null) {
+            vm.newVariable(varName, VariableType.REAL);
             return new RealNode(new BigDecimal("0.0"));
+        }
+        if (c.NUMBER() != null) {
+            vm.newVariable(varName, VariableType.NUMBER);
+            return new RealNode(new BigDecimal(0.0));
         }
 
         throw new IllegalArgumentException("What kind of number declaration is \"" + c.getText() + "\"?");
