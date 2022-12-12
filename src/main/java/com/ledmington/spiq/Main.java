@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import org.antlr.v4.runtime.CharStreams;
 
-import com.ledmington.spiq.compiler.SpiqCompiler;
+import com.ledmington.spiq.interpreter.SpiqInterperter;
 
 public class Main {
     public static void main(String[] args) {
@@ -41,7 +41,7 @@ public class Main {
         System.out.println("Reading \"" + filename + "\"");
 
         try {
-            final SpiqCompiler compiler = new SpiqCompiler();
+            final SpiqInterperter compiler = new SpiqInterperter();
             compiler.compile(CharStreams.fromFileName(filename));
         } catch (IOException e) {
             e.printStackTrace();

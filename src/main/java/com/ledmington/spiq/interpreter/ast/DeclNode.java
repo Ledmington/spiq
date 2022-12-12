@@ -6,23 +6,21 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.compiler.ast;
+package com.ledmington.spiq.interpreter.ast;
 
-import java.util.List;
+import com.ledmington.spiq.interpreter.ast.numbers.NumberNode;
 
 import gen.spiqBaseVisitor;
 
-public class ProgBodyNode extends Node {
+public class DeclNode extends Node {
 
-    private final List<DeclNode> declarations;
+    private final IdNode id;
+    private final NumberNode number;
 
-    public ProgBodyNode(final List<DeclNode> nodes) {
+    public DeclNode(final IdNode id, final NumberNode number) {
         super();
-        declarations = nodes;
-    }
-
-    public List<DeclNode> getDeclarations() {
-        return declarations;
+        this.id = id;
+        this.number = number;
     }
 
     @Override

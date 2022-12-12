@@ -6,10 +6,6 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.compiler;
+package com.ledmington.spiq.interpreter.vm;
 
-import gen.spiqBaseVisitor;
-
-public interface Visitable {
-    <S, E extends Exception> S accept(spiqBaseVisitor<S> visitor) throws E;
-}
+public record Variable(String name, VariableType type) {}

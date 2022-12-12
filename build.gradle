@@ -18,6 +18,7 @@ String author = 'Filippo Barbari'
 String authorMail = 'filippo.barbari@gmail.com'
 String appName = 'spiq'
 String appNameLowercase = 'spiq'
+String mainClassName = "${group}.Main"
 
 java {
 	sourceCompatibility = '17'
@@ -56,7 +57,7 @@ test {
 }
 
 application {
-	mainClass = 'Main'
+	mainClass = mainClassName
 }
 
 generateGrammarSource {
@@ -121,7 +122,7 @@ spotless {
 	java {
 		target fileTree('.') {
 			include '**/*.java'
-			exclude '**/build/**', '**/build-*/**'
+			exclude '**/build/**', '**/build-*/**', '**/bin/**', '**/gen/**'
 		}
 		removeUnusedImports()
 		formatAnnotations()

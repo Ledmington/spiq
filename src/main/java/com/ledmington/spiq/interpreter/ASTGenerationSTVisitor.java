@@ -6,25 +6,24 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.compiler;
+package com.ledmington.spiq.interpreter;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.ibm.icu.math.BigDecimal;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.ledmington.spiq.compiler.ast.DeclNode;
-import com.ledmington.spiq.compiler.ast.IdNode;
-import com.ledmington.spiq.compiler.ast.Node;
-import com.ledmington.spiq.compiler.ast.ProgBodyNode;
-import com.ledmington.spiq.compiler.ast.numbers.FractionNode;
-import com.ledmington.spiq.compiler.ast.numbers.IntegerNode;
-import com.ledmington.spiq.compiler.ast.numbers.NumberNode;
-import com.ledmington.spiq.compiler.ast.numbers.RealNode;
+import com.ledmington.spiq.interpreter.ast.DeclNode;
+import com.ledmington.spiq.interpreter.ast.IdNode;
+import com.ledmington.spiq.interpreter.ast.Node;
+import com.ledmington.spiq.interpreter.ast.ProgBodyNode;
+import com.ledmington.spiq.interpreter.ast.numbers.FractionNode;
+import com.ledmington.spiq.interpreter.ast.numbers.IntegerNode;
+import com.ledmington.spiq.interpreter.ast.numbers.NumberNode;
+import com.ledmington.spiq.interpreter.ast.numbers.RealNode;
 
 import gen.spiqBaseVisitor;
 import gen.spiqParser.DeclContext;
@@ -39,7 +38,16 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
     private static final String SINGLE_INDENTATION = "  "; // double space
 
     private String indent = "";
-    private final boolean debug = true;
+    private final boolean debug;
+
+    public ASTGenerationSTVisitor(final boolean debug) {
+        super();
+        this.debug = debug;
+    }
+
+    public ASTGenerationSTVisitor() {
+        this(true);
+    }
 
     private void printVarAndProdName(ParserRuleContext ctx) {
         String prefix = "";

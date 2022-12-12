@@ -6,14 +6,14 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.compiler.ast.numbers;
+package com.ledmington.spiq.interpreter.ast.numbers;
 
-import com.ibm.icu.math.BigDecimal;
+import java.math.BigInteger;
 
-public class RealNode extends NumberNode {
-    private final BigDecimal value;
+public class IntegerNode extends NumberNode {
+    private final BigInteger value;
 
-    public RealNode(final BigDecimal value) {
+    public IntegerNode(final BigInteger value) {
         super();
         this.value = value;
     }

@@ -6,21 +6,16 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.compiler.ast;
+package com.ledmington.spiq.interpreter.ast.numbers;
+
+import com.ledmington.spiq.interpreter.ast.Node;
 
 import gen.spiqBaseVisitor;
 
-public class IdNode extends Node {
+public abstract class NumberNode extends Node {
 
-    private final String name;
-
-    public IdNode(final String name) {
+    public NumberNode() {
         super();
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override

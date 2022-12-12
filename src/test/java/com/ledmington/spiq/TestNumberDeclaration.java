@@ -14,15 +14,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.ledmington.spiq.compiler.SpiqCompiler;
+import com.ledmington.spiq.interpreter.SpiqInterperter;
 
 public class TestNumberDeclaration {
 
-    private SpiqCompiler compiler;
+    private SpiqInterperter compiler;
 
     @BeforeEach
     public void setup() {
-        compiler = new SpiqCompiler();
+        compiler = new SpiqInterperter();
     }
 
     @ParameterizedTest

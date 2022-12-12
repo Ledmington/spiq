@@ -6,7 +6,7 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.compiler.ast.numbers;
+package com.ledmington.spiq.interpreter.ast.numbers;
 
 import java.math.BigInteger;
 
