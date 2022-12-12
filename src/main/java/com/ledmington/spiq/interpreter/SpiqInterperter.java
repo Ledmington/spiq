@@ -27,6 +27,10 @@ public final class SpiqInterperter {
 
     public SpiqInterperter() {}
 
+    public ExecutionContext getExecutionContext() {
+        return vm.getExecutionContext();
+    }
+
     public int compile(final CharStream stream) {
         return this.compile(stream.toString());
     }

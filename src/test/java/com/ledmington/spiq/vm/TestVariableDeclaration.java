@@ -20,6 +20,7 @@ import com.ledmington.spiq.interpreter.vm.SVM;
 import com.ledmington.spiq.interpreter.vm.SpiqVM;
 import com.ledmington.spiq.interpreter.vm.Variable;
 import com.ledmington.spiq.interpreter.vm.VariableType;
+import com.ledmington.spiq.interpreter.vm.exceptions.DoubleDeclaration;
 
 public final class TestVariableDeclaration {
 
@@ -49,5 +50,11 @@ public final class TestVariableDeclaration {
         vm.newVariable("A", type);
         assertEquals(1, vm.getAllVariables().size());
         assertEquals(new Variable("A", type), vm.getAllVariables().iterator().next());
+    }
+
+    @Test
+    public void noDuplicateVariableNames() {
+        vm.newVariable("A", VariableType.INTEGER);
+        assertThrows(DoubleDeclaration.class, () -> vm.newVariable("A", VariableType.NUMBER));
     }
 }

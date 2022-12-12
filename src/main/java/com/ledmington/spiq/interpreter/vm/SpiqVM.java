@@ -10,10 +10,14 @@ package com.ledmington.spiq.interpreter.vm;
 
 import java.util.Collection;
 
+import com.ledmington.spiq.interpreter.ExecutionContext;
+
 /**
  * Spiq Virtual Machine that actually executes the interpreted spiq code.
  */
 public interface SpiqVM {
+
+    ExecutionContext getExecutionContext();
 
     Collection<Variable> getAllVariables();
 
