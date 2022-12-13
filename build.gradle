@@ -18,7 +18,7 @@ String author = 'Filippo Barbari'
 String authorMail = 'filippo.barbari@gmail.com'
 String appName = 'spiq'
 String appNameLowercase = 'spiq'
-String mainClassName = "${group}.Main"
+String mainClassName = "${group}.Spiq"
 
 java {
 	sourceCompatibility = '17'
@@ -31,6 +31,7 @@ repositories {
 
 dependencies {
 	// compile-time dependencies
+	implementation 'info.picocli:picocli:4.7.0'
 	antlr 'org.antlr:antlr4:4.11.1'
 
 	// annotations
@@ -132,7 +133,7 @@ spotless {
 		palantirJavaFormat('2.26.0')
 
 		// check https://javadoc.io/doc/com.diffplug.spotless/spotless-plugin-gradle/latest/com/diffplug/gradle/spotless/JavaExtension.html
-		importOrder('java', 'javax', 'javafx', 'com', 'org', group)
+		importOrder('java', 'javax', 'javafx', 'com', 'org', 'picocli', 'com.ledmington')
 
 		licenseHeader String.join("\n", "/*",
 		" * Copyright (C) 2022-${new Date().format('yyyy')} ${author} <${authorMail}>",

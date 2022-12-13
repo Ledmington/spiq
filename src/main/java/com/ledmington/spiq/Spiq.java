@@ -12,11 +12,17 @@ import java.io.IOException;
 
 import org.antlr.v4.runtime.CharStreams;
 
-import com.ledmington.spiq.interpreter.SpiqInterperter;
+import picocli.CommandLine;
 
-public class Main {
+import com.ledmington.spiq.interpreter.SpiqInterperter;
+import com.ledmington.spiq.utils.SpiqUtils;
+
+public final class Spiq {
     public static void main(String[] args) {
-        System.err.println(nlJoin(
+        int exitCode = new CommandLine(new SpiqCli()).execute(args);
+        System.exit(exitCode);
+
+        System.err.println(SpiqUtils.nlJoin(
                 "",
                 " ________  ________  ___  ________      ",
                 "|\\  _____\\|\\   __  \\|\\  \\|\\   __  \\     ",
@@ -27,16 +33,16 @@ public class Main {
                 "    |\\________\\|__|     \\|__|\\|___| \\__\\",
                 "    \\|_________|                   \\|__|\n"));
 
-        String filename;
+        final String filename = "prova.spiq";
 
-        if (args.length < 2) {
-            // System.err.println("\nError: No input files specified.\n");
-            // System.err.flush();
-            // System.exit(-1);
-            filename = "prova.spiq";
-        } else {
-            filename = args[1];
-        }
+        // if (args.length < 2) {
+        //     // System.err.println("\nError: No input files specified.\n");
+        //     // System.err.flush();
+        //     // System.exit(-1);
+        //     filename = "prova.spiq";
+        // } else {
+        //     filename = args[1];
+        // }
 
         System.out.println("Reading \"" + filename + "\"");
 
@@ -46,13 +52,5 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static String nlJoin(String... lines) {
-        String code = null;
-        for (final String line : lines) {
-            if (line != null) code = (code == null ? "" : code + "\n") + line;
-        }
-        return code;
     }
 }
