@@ -6,9 +6,9 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.interpreter.ast;
+package com.ledmington.spiq.interpreter.visitors.ast;
 
-import gen.spiqBaseVisitor;
+import com.ledmington.spiq.interpreter.visitors.BaseASTVisitor;
 
 public class IdNode extends Node {
 
@@ -24,7 +24,7 @@ public class IdNode extends Node {
     }
 
     @Override
-    public <S, E extends Exception> S accept(final spiqBaseVisitor<S> visitor) throws E {
-        return null;
+    public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+        return visitor.visitNode(this);
     }
 }

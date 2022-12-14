@@ -8,8 +8,8 @@
  */
 package com.ledmington.spiq.interpreter;
 
-import gen.spiqBaseVisitor;
+import com.ledmington.spiq.interpreter.visitors.BaseASTVisitor;
 
 public interface Visitable {
-    <S, E extends Exception> S accept(spiqBaseVisitor<S> visitor) throws E;
+    <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E;
 }

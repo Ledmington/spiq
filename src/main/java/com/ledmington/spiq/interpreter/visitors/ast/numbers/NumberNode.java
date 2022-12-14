@@ -6,11 +6,10 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.interpreter.ast.numbers;
+package com.ledmington.spiq.interpreter.visitors.ast.numbers;
 
-import com.ledmington.spiq.interpreter.ast.Node;
-
-import gen.spiqBaseVisitor;
+import com.ledmington.spiq.interpreter.visitors.BaseASTVisitor;
+import com.ledmington.spiq.interpreter.visitors.ast.Node;
 
 public abstract class NumberNode extends Node {
 
@@ -19,7 +18,7 @@ public abstract class NumberNode extends Node {
     }
 
     @Override
-    public <S, E extends Exception> S accept(final spiqBaseVisitor<S> visitor) throws E {
-        return null;
+    public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+        return visitor.visitNode(this);
     }
 }

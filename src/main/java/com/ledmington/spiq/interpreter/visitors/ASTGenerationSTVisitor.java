@@ -6,7 +6,7 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.interpreter;
+package com.ledmington.spiq.interpreter.visitors;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -16,16 +16,15 @@ import java.util.List;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.ledmington.spiq.interpreter.ast.DeclNode;
-import com.ledmington.spiq.interpreter.ast.IdNode;
-import com.ledmington.spiq.interpreter.ast.Node;
-import com.ledmington.spiq.interpreter.ast.ProgBodyNode;
-import com.ledmington.spiq.interpreter.ast.numbers.FractionNode;
-import com.ledmington.spiq.interpreter.ast.numbers.IntegerNode;
-import com.ledmington.spiq.interpreter.ast.numbers.NumberNode;
-import com.ledmington.spiq.interpreter.ast.numbers.RealNode;
-import com.ledmington.spiq.interpreter.vm.SpiqVM;
-import com.ledmington.spiq.interpreter.vm.VariableType;
+import com.ledmington.spiq.interpreter.CompilerUtils;
+import com.ledmington.spiq.interpreter.visitors.ast.DeclNode;
+import com.ledmington.spiq.interpreter.visitors.ast.IdNode;
+import com.ledmington.spiq.interpreter.visitors.ast.Node;
+import com.ledmington.spiq.interpreter.visitors.ast.ProgBodyNode;
+import com.ledmington.spiq.interpreter.visitors.ast.numbers.FractionNode;
+import com.ledmington.spiq.interpreter.visitors.ast.numbers.IntegerNode;
+import com.ledmington.spiq.interpreter.visitors.ast.numbers.NumberNode;
+import com.ledmington.spiq.interpreter.visitors.ast.numbers.RealNode;
 
 import gen.spiqBaseVisitor;
 import gen.spiqParser.DeclContext;
@@ -41,19 +40,15 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
     private static final String SINGLE_INDENTATION = "  "; // double space
 
     private String indent = "";
-    private String varName = null;
     private final boolean debug;
 
-    private final SpiqVM vm;
-
-    public ASTGenerationSTVisitor(final SpiqVM vm, final boolean debug) {
+    public ASTGenerationSTVisitor(final boolean debug) {
         super();
-        this.vm = vm;
         this.debug = debug;
     }
 
-    public ASTGenerationSTVisitor(final SpiqVM vm) {
-        this(vm, true);
+    public ASTGenerationSTVisitor() {
+        this(false);
     }
 
     private void printVarAndProdName(ParserRuleContext ctx) {
@@ -93,9 +88,6 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
             printVarAndProdName(c);
         }
         final List<DeclContext> declarations = c.decl();
-        if (debug) {
-            System.out.println("Found " + declarations.size() + " declarations");
-        }
         final List<DeclNode> nodes = new LinkedList<>();
         for (int i = 0; i < declarations.size(); i++) {
             nodes.add((DeclNode) visit(c.decl(i)));
@@ -109,13 +101,9 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
             printVarAndProdName(c);
         }
 
-        varName = c.ID().getText();
-
-        final DeclNode result = new DeclNode(
-                new IdNode(varName), // (IdNode) visit(c.ID()), // TODO solve this
+        return new DeclNode(
+                new IdNode(c.ID().getText()), // (IdNode) visit(c.ID()), // TODO solve this
                 (NumberNode) visit(c.numberDeclaration()));
-        varName = null;
-        return result;
     }
 
     @Override
@@ -141,19 +129,15 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
         }
 
         if (c.INTEGER() != null) {
-            vm.newVariable(varName, VariableType.INTEGER);
             return new IntegerNode(new BigInteger("0"));
         }
         if (c.FRACTION() != null || c.RATIONAL() != null) {
-            vm.newVariable(varName, VariableType.RATIONAL);
             return new FractionNode(new BigInteger("0"), new BigInteger("1"));
         }
         if (c.REAL() != null) {
-            vm.newVariable(varName, VariableType.REAL);
             return new RealNode(new BigDecimal("0.0"));
         }
         if (c.NUMBER() != null) {
-            vm.newVariable(varName, VariableType.NUMBER);
             return new RealNode(new BigDecimal(0.0));
         }
 
@@ -183,7 +167,6 @@ public class ASTGenerationSTVisitor extends spiqBaseVisitor<Node> {
         }
 
         if (c.real() != null) {
-            System.out.println("real: " + c.real().getText());
             return new RealNode(new BigDecimal(sign + c.real().getText()));
         }
 

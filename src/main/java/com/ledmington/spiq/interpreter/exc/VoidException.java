@@ -6,6 +6,12 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.interpreter.vm;
+package com.ledmington.spiq.interpreter.exc;
 
-public record Variable(String name, VariableType type) {}
+import java.io.Serial;
+
+public class VoidException extends RuntimeException {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+}

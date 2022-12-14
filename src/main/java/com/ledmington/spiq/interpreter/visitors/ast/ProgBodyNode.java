@@ -6,11 +6,12 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.interpreter.ast;
+package com.ledmington.spiq.interpreter.visitors.ast;
 
+import java.util.Collections;
 import java.util.List;
 
-import gen.spiqBaseVisitor;
+import com.ledmington.spiq.interpreter.visitors.BaseASTVisitor;
 
 public class ProgBodyNode extends Node {
 
@@ -18,7 +19,7 @@ public class ProgBodyNode extends Node {
 
     public ProgBodyNode(final List<DeclNode> nodes) {
         super();
-        declarations = nodes;
+        declarations = Collections.unmodifiableList(nodes);
     }
 
     public List<DeclNode> getDeclarations() {
@@ -26,7 +27,7 @@ public class ProgBodyNode extends Node {
     }
 
     @Override
-    public <S, E extends Exception> S accept(final spiqBaseVisitor<S> visitor) throws E {
-        return null;
+    public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+        return visitor.visitNode(this);
     }
 }

@@ -14,24 +14,19 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.ledmington.spiq.interpreter.ast.Node;
-import com.ledmington.spiq.interpreter.vm.SVM;
-import com.ledmington.spiq.interpreter.vm.SpiqVM;
+import com.ledmington.spiq.interpreter.visitors.ASTGenerationSTVisitor;
+import com.ledmington.spiq.interpreter.visitors.ExecutorVisitor;
+import com.ledmington.spiq.interpreter.visitors.SymbolTableASTVisitor;
+import com.ledmington.spiq.interpreter.visitors.ast.Node;
 
 import gen.spiqLexer;
 import gen.spiqParser;
 
 public final class SpiqInterperter {
 
-    private final SpiqVM vm = new SVM();
-
     public SpiqInterperter() {}
 
-    public ExecutionContext getExecutionContext() {
-        return vm.getExecutionContext();
-    }
-
-    public int compile(final CharStream stream) {
+    public CompilationResult compile(final CharStream stream) {
         return this.compile(stream.toString());
     }
 
@@ -40,9 +35,9 @@ public final class SpiqInterperter {
      * @param code
      *      The spiq code to be interpreted.
      * @return
-     *      The number of errors.
+     *      The result of the compilation.
      */
-    public int compile(final String code) {
+    public CompilationResult compile(final String code) {
         final CharStream chars = CharStreams.fromString(code);
         final spiqLexer lexer = new spiqLexer(chars);
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -53,9 +48,23 @@ public final class SpiqInterperter {
 
         final ParseTree st = parser.prog();
 
-        final ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(vm, true); // use true to visualize the ST
-        final Node ast = visitor.visit(st); // TODO fix unused "ast"
+        System.out.println("Generating AST");
+        final ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(true);
+        final Node ast = visitor.visit(st);
 
-        return lexer.lexicalErrors;
+        System.out.println("Checking symbol table");
+        final SymbolTableASTVisitor symTableVisitor = new SymbolTableASTVisitor(true);
+        symTableVisitor.visit(ast);
+
+        System.out.println("Executing");
+        final ExecutorVisitor executor = new ExecutorVisitor(true);
+        executor.visit(ast);
+
+        return new CompilationResult(
+                lexer.lexicalErrors,
+                parser.getNumberOfSyntaxErrors(),
+                symTableVisitor.errors,
+                // typeCheckVisitor.errors,
+                executor.errors);
     }
 }

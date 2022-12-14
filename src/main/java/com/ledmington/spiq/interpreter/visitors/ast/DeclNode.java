@@ -6,11 +6,10 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.interpreter.ast;
+package com.ledmington.spiq.interpreter.visitors.ast;
 
-import com.ledmington.spiq.interpreter.ast.numbers.NumberNode;
-
-import gen.spiqBaseVisitor;
+import com.ledmington.spiq.interpreter.visitors.BaseASTVisitor;
+import com.ledmington.spiq.interpreter.visitors.ast.numbers.NumberNode;
 
 public class DeclNode extends Node {
 
@@ -23,8 +22,16 @@ public class DeclNode extends Node {
         this.number = number;
     }
 
+    public IdNode id() {
+        return id;
+    }
+
+    public NumberNode number() {
+        return number;
+    }
+
     @Override
-    public <S, E extends Exception> S accept(final spiqBaseVisitor<S> visitor) throws E {
-        return null;
+    public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+        return visitor.visitNode(this);
     }
 }

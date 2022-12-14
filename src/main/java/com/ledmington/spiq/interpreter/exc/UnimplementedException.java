@@ -6,10 +6,12 @@
  * spiq can not be copied and/or distributed without
  * the express permission of Filippo Barbari.
  */
-package com.ledmington.spiq.interpreter;
+package com.ledmington.spiq.interpreter.exc;
 
-import java.util.Collection;
+import java.io.Serial;
 
-import com.ledmington.spiq.interpreter.vm.Variable;
+public class UnimplementedException extends RuntimeException {
 
-public record ExecutionContext(Collection<Variable> variables) {}
+    @Serial
+    private static final long serialVersionUID = 1L;
+}

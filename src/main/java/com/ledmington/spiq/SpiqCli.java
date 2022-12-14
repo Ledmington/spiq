@@ -9,10 +9,16 @@
 package com.ledmington.spiq;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Callable;
+
+import org.antlr.v4.runtime.CharStreams;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
+
+import com.ledmington.spiq.interpreter.SpiqInterperter;
+import com.ledmington.spiq.utils.SpiqUtils;
 
 @Command(
         name = "spiq",
@@ -31,7 +37,34 @@ public final class SpiqCli implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        System.out.println(file);
+        System.err.println(SpiqUtils.nlJoin(
+                "",
+                " ________  ________  ___  ________      ",
+                "|\\  _____\\|\\   __  \\|\\  \\|\\   __  \\     ",
+                "\\ \\  \\____| \\  \\_\\  \\ \\  \\ \\  \\ \\  \\    ",
+                " \\ \\_____  \\ \\   ____\\ \\  \\ \\  \\ \\  \\   ",
+                "  \\|____|\\  \\ \\  \\___|\\ \\  \\ \\  \\_\\  \\  ",
+                "     ___\\_\\  \\ \\__\\    \\ \\__\\ \\_____  \\ ",
+                "    |\\________\\|__|     \\|__|\\|___| \\__\\",
+                "    \\|_________|                   \\|__|\n"));
+
+        // if (args.length < 2) {
+        //     // System.err.println("\nError: No input files specified.\n");
+        //     // System.err.flush();
+        //     // System.exit(-1);
+        //     filename = "prova.spiq";
+        // } else {
+        //     filename = args[1];
+        // }
+
+        System.out.println("Reading \"" + file + "\"");
+
+        try {
+            final SpiqInterperter compiler = new SpiqInterperter();
+            compiler.compile(CharStreams.fromFileName(file.getAbsolutePath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return 0;
     }
 }
