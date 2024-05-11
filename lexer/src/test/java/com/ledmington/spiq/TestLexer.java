@@ -40,7 +40,7 @@ public final class TestLexer {
         } catch (final IOException e) {
             fail();
         }
-        final Lexer lexer = new Lexer(testFile.toFile());
+        final SpiqLexer lexer = new SpiqLexer(testFile.toFile());
         assertEquals(expectedTokens, lexer.tokenize());
     }
 
@@ -58,7 +58,7 @@ public final class TestLexer {
         } catch (final IOException e) {
             fail();
         }
-        final Lexer lexer = new Lexer(testFile.toFile());
+        final SpiqLexer lexer = new SpiqLexer(testFile.toFile());
         assertThrows(IllegalArgumentException.class, lexer::tokenize);
     }
 }

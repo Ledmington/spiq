@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class Lexer {
+public final class SpiqLexer {
 
     private final char[] v;
     private int i = 0;
     private final List<SpiqToken> tokens;
 
-    public Lexer(final File file) {
+    public SpiqLexer(final File file) {
         try {
             this.v = Files.readString(Objects.requireNonNull(file).toPath()).toCharArray();
         } catch (final IOException e) {
