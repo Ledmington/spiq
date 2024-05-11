@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Filippo Barbari <filippo.barbari@gmail.com>
+ * Copyright (C) 2022-2024 Filippo Barbari <filippo.barbari@gmail.com>
  *
  * This file is part of spiq.
  *
