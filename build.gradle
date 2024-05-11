@@ -43,7 +43,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
 	options.release = 17
 	options.compilerArgs << '-Xdiags:verbose'
 	options.compilerArgs << '-Xlint:unchecked'
@@ -66,12 +66,6 @@ generateGrammarSource {
 	maxHeapSize = "64m"
 	arguments += ["-visitor", "-long-messages"]
 }
-
-task customClean(type: Delete) {
-	delete "src/main/antlr/.antlr"
-	delete "src/main/java/gen"
-}
-clean.dependsOn customClean
 
 test {
 	finalizedBy jacocoTestReport // report is always generated after tests run
@@ -146,8 +140,8 @@ spotless {
 	}
 }
 
-String fatJarName = "${buildDir}/libs/${appNameLowercase}-${version}.jar"
-task buildFatJar(type: Jar) {
+String fatJarName = "${project.layout.getBuildDirectory().asFile}/libs/${appNameLowercase}-${version}.jar"
+tasks.register('fatJar', Jar) {
 	group 'distribution'
 	description 'Builds the fat jar of the application'
 	from sourceSets.main.output
@@ -159,58 +153,20 @@ task buildFatJar(type: Jar) {
 	manifest {
 		archiveBaseName = appNameLowercase
 		attributes(
-			//"Implementation-Title": "Gradle",
-			"Implementation-Version": version,
-			"Main-Class": "$mainClassName"
+				//"Implementation-Title": "Gradle",
+				"Implementation-Version": version,
+				"Main-Class": "$mainClassName"
 		)
 	}
 
 	doLast {
 		println "The fat jar is ${fatJarName}"
-		println String.format("Fat jar size: %.3f MB", new File(fatJarName).length() / 1_000_000)
+		println String.format("Fat jar size: %.3f MB", new File(fatJarName).length() / 1_000_000L)
 	}
 }
 
 tasks.compileJava.dependsOn(spotlessApply)
 
 wrapper {
-	gradleVersion = '7.6'
-}
-
-task doc(dependsOn: javadoc) {
-	group 'documentation'
-	description 'Generates Javadoc and opens it with the default browser'
-	doLast {
-		Desktop.desktop.browse "file://$buildDir/docs/javadoc/index.html".toURI()
-	}
-}
-
-task trello {
-	group 'useful'
-	description 'Opens the kanban board of the project in the default browser'
-	doLast {
-		Desktop.desktop.browse "https://cryptpad.fr/kanban/#/2/kanban/edit/NTAZkFvrST0+oX1PWtQ11nQ9/".toURI()
-	}
-}
-
-task downloadGitstats(type: Download) {
-	src "https://github.com/hoxu/gitstats/tarball/master"
-	dest new File(buildDir, "gitstats.tar.gz")
-	overwrite false
-}
-
-task downloadAndUnzipGitstats(dependsOn: downloadGitstats, type: Copy) {
-	from tarTree(downloadGitstats.dest)
-	into "${buildDir}/gitstats/"
-	includeEmptyDirs(false)
-}
-
-task gitstats(dependsOn: downloadAndUnzipGitstats, type: Exec) {
-	group 'useful'
-	description 'Creates a statistics report for the repository and shows it in the default browser.'
-	workingDir "${buildDir}/gitstats/hoxu-gitstats-55c5c28/"
-	commandLine('./gitstats', "${projectDir}", "${buildDir}/gitstats/report")
-	doLast {
-		Desktop.desktop.browse "file://$buildDir/gitstats/report/index.html".toURI()
-	}
+	gradleVersion = '8.7'
 }
