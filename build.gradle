@@ -1,14 +1,12 @@
-import java.awt.Desktop
-
 plugins {
 	id 'java'
 	id 'antlr'
 	id 'application'
 	id 'jacoco'
-	id 'com.adarshr.test-logger' version '3.2.0' // for pretty test logs
-	id 'com.diffplug.spotless' version '6.12.0' // for code formatting
-	id 'com.github.ben-manes.versions' version '0.44.0' // for checking latest version of gradle, gradle plugins and dependencies
-	id 'de.undercouch.download' version '5.3.0' // for downloading files in tasks
+	id 'com.adarshr.test-logger' version '4.0.0' // for pretty test logs
+	id 'com.diffplug.spotless' version '6.25.0' // for code formatting
+	id 'com.github.ben-manes.versions' version '0.51.0' // for checking latest version of gradle, gradle plugins and dependencies
+	id 'de.undercouch.download' version '5.6.0' // for downloading files in tasks
 }
 
 group 'com.ledmington.spiq'
@@ -21,35 +19,41 @@ String appNameLowercase = 'spiq'
 String mainClassName = "${group}.Spiq"
 
 java {
-	sourceCompatibility = '17'
-	targetCompatibility = '17'
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
 }
 
 repositories {
 	mavenCentral()
 }
 
+ext.junitVersion = "5.10.2"
 dependencies {
 	// compile-time dependencies
-	implementation 'info.picocli:picocli:4.7.0'
-	antlr 'org.antlr:antlr4:4.11.1'
+	implementation 'info.picocli:picocli:4.7.6'
+	antlr 'org.antlr:antlr4:4.13.1'
 
 	// annotations
-	annotationProcessor 'com.google.dagger:dagger-compiler:2.44.2'
+	annotationProcessor 'com.google.dagger:dagger-compiler:2.51.1'
 
-	// testing stuff
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
-	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.1'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
+	testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+	testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
 
-tasks.withType(JavaCompile).configureEach {
-	options.release = 17
+compileJava {
 	options.compilerArgs << '-Xdiags:verbose'
-	options.compilerArgs << '-Xlint:unchecked'
-	options.compilerArgs << '-Xlint:deprecation'
+	options.compilerArgs << '-Xlint:all'
+	options.compilerArgs << '-Werror'
 	options.deprecation = true
 	options.encoding = 'UTF-8'
+}
+
+javadoc {
+	failOnError = true
+	title "spiq-v${version}"
+	// options.addBooleanOption('Werror', true)
 }
 
 test {
@@ -124,7 +128,7 @@ spotless {
 		trimTrailingWhitespace()
 		endWithNewline()
 		setEncoding('utf-8')
-		palantirJavaFormat('2.26.0')
+		palantirJavaFormat('2.39.0')
 
 		// check https://javadoc.io/doc/com.diffplug.spotless/spotless-plugin-gradle/latest/com/diffplug/gradle/spotless/JavaExtension.html
 		importOrder('java', 'javax', 'javafx', 'com', 'org', 'picocli', 'com.ledmington')
