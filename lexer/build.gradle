@@ -10,12 +10,9 @@ plugins {
 
 group 'com.ledmington.spiq'
 version '0.1.0'
-description 'spiq interpreter'
 String author = 'Filippo Barbari'
 String authorMail = 'filippo.barbari@gmail.com'
 String appName = 'spiq'
-String appNameLowercase = 'spiq'
-String mainClassName = "${group}.Spiq"
 
 java {
 	toolchain {
@@ -44,7 +41,7 @@ compileJava {
 
 javadoc {
 	failOnError = true
-	title "spiq-v${version}"
+	title "spiq-lexer-v${version}"
 	// options.addBooleanOption('Werror', true)
 }
 
@@ -123,31 +120,6 @@ spotless {
 				" * ${appName} can not be copied and/or distributed without",
 				" * the express permission of ${author}.",
 				" */")
-	}
-}
-
-String fatJarName = "${project.layout.getBuildDirectory().asFile}/libs/${appNameLowercase}-${version}.jar"
-tasks.register('fatJar', Jar) {
-	group 'distribution'
-	description 'Builds the fat jar of the application'
-	from sourceSets.main.output
-	dependsOn configurations.runtimeClasspath
-	from {
-		configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
-	}
-	duplicatesStrategy = 'include'
-	manifest {
-		archiveBaseName = appNameLowercase
-		attributes(
-				//"Implementation-Title": "Gradle",
-				"Implementation-Version": version,
-				"Main-Class": "$mainClassName"
-		)
-	}
-
-	doLast {
-		println "The fat jar is ${fatJarName}"
-		println String.format("Fat jar size: %.3f MB", new File(fatJarName).length() / 1_000_000L)
 	}
 }
 
