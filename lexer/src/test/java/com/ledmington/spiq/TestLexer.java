@@ -59,6 +59,6 @@ public final class TestLexer {
             fail();
         }
         final SpiqLexer lexer = new SpiqLexer(testFile.toFile());
-        assertThrows(IllegalArgumentException.class, lexer::tokenize);
+        assertThrows(SpiqLexerException.class, lexer::tokenize);
     }
 }

@@ -24,6 +24,33 @@ public final class SpiqParser {
     }
 
     public List<SpiqNode> parse() {
+        while (i < tokens.length) {
+            nodes.add(parseVariableDeclaration());
+        }
+
         return nodes;
+    }
+
+    private void expect(final SpiqToken expected) {
+        if (i < tokens.length && tokens[i] != expected) {
+            throw new UnexpectedTokenException(tokens[i], expected);
+        }
+        i++;
+    }
+
+    private VariableDeclarationNode parseVariableDeclaration() {
+        if (!(tokens[i] instanceof SpiqID)) {
+            throw new UnexpectedTokenException(tokens[i], new SpiqID("<id>"));
+        }
+
+        final String id = ((SpiqID) tokens[i]).id();
+        i++;
+
+        expect(SpiqKeywords.IS);
+        expect(SpiqKeywords.A);
+        expect(SpiqKeywords.NUMBER);
+        expect(SpiqSymbols.DOT);
+
+        return new VariableDeclarationNode(id, SpiqType.NUMBER);
     }
 }

@@ -22,4 +22,32 @@ public final class VariableDeclarationNode implements SpiqNode {
         }
         this.type = Objects.requireNonNull(type);
     }
+
+    @Override
+    public String toString() {
+        return "VariableDeclarationNode(id=" + id + ";type=" + type + ")";
+    }
+
+    @Override
+    public int hashCode() {
+        int h = 17;
+        h = 31 * h + id.hashCode();
+        h = 31 * h + type.hashCode();
+        return h;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (this == other) {
+            return true;
+        }
+        if (!this.getClass().equals(other.getClass())) {
+            return false;
+        }
+        final VariableDeclarationNode vdn = (VariableDeclarationNode) other;
+        return this.id.equals(vdn.id) && this.type.equals(vdn.type);
+    }
 }

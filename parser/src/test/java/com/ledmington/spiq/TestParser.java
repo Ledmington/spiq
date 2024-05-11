@@ -31,7 +31,7 @@ public final class TestParser {
 
     @ParameterizedTest
     @MethodSource("validSources")
-    public void correct(final String source, final List<SpiqToken> expectedTokens) {
+    public void correct(final String source, final List<SpiqNode> expectedNodes) {
         Path testFile = null;
         try {
             testFile = Files.createTempFile("spiq-", "-test-source");
@@ -39,12 +39,12 @@ public final class TestParser {
         } catch (final IOException e) {
             fail();
         }
-        final SpiqLexer lexer = new SpiqLexer(testFile.toFile());
-        assertEquals(expectedTokens, lexer.tokenize());
+        final SpiqParser parser = new SpiqParser(testFile.toFile());
+        assertEquals(expectedNodes, parser.parse());
     }
 
     private static Stream<Arguments> invalidSources() {
-        return Stream.of("A is not a number.","A is a number").map(Arguments::of);
+        return Stream.of("A is not a number.", "A is a number").map(Arguments::of);
     }
 
     @ParameterizedTest
@@ -57,7 +57,7 @@ public final class TestParser {
         } catch (final IOException e) {
             fail();
         }
-        final SpiqLexer lexer = new SpiqLexer(testFile.toFile());
-        assertThrows(IllegalArgumentException.class, lexer::tokenize);
+        final SpiqParser parser = new SpiqParser(testFile.toFile());
+        assertThrows(SpiqParserException.class, parser::parse);
     }
 }

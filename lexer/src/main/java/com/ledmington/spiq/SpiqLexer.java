@@ -38,18 +38,24 @@ public final class SpiqLexer {
                 break;
             }
 
-            final StringBuilder sb = new StringBuilder();
-            while (i < v.length && !Character.isWhitespace(v[i])) {
-                sb.append(v[i]);
-                i++;
-            }
-            final String token = sb.toString();
             tokens.add(
-                    switch (token) {
-                        case "is" -> SpiqKeywords.IS;
-                        case "a" -> SpiqKeywords.A;
-                        case "number" -> SpiqKeywords.NUMBER;
-                        default -> new SpiqID(token);
+                    switch (v[i]) {
+                        case '.' -> SpiqSymbols.DOT;
+                        default -> {
+                            final StringBuilder sb = new StringBuilder();
+                            while (i < v.length && Character.isAlphabetic(v[i])) {
+                                sb.append(v[i]);
+                                i++;
+                            }
+                            final String token = sb.toString();
+
+                            yield switch (token) {
+                                case "is" -> SpiqKeywords.IS;
+                                case "a" -> SpiqKeywords.A;
+                                case "number" -> SpiqKeywords.NUMBER;
+                                default -> new SpiqID(token);
+                            };
+                        }
                     });
         }
 
