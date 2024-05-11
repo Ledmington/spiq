@@ -11,5 +11,8 @@ package com.ledmington.spiq;
 public enum SpiqKeywords implements SpiqToken {
     IS,
     A,
-    NUMBER
+    AN,
+    NUMBER,
+    INTEGER,
+    REAL
 }

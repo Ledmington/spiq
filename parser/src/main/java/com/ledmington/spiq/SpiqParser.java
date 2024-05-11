@@ -46,11 +46,35 @@ public final class SpiqParser {
         final String id = ((SpiqID) tokens[i]).id();
         i++;
 
+        final SpiqType type;
+
         expect(SpiqKeywords.IS);
-        expect(SpiqKeywords.A);
-        expect(SpiqKeywords.NUMBER);
+
+        if (tokens[i] == SpiqKeywords.A) {
+            i++;
+            if (tokens[i] == SpiqKeywords.NUMBER) {
+                i++;
+                type = SpiqType.NUMBER;
+            } else if (tokens[i] == SpiqKeywords.REAL) {
+                i++;
+                type = SpiqType.REAL;
+            } else {
+                throw new UnexpectedTokenException(tokens[i]);
+            }
+        } else if (tokens[i] == SpiqKeywords.AN) {
+            i++;
+            if (tokens[i] == SpiqKeywords.INTEGER) {
+                i++;
+                type = SpiqType.INTEGER;
+            } else {
+                throw new UnexpectedTokenException(tokens[i]);
+            }
+        } else {
+            throw new UnexpectedTokenException(tokens[i]);
+        }
+
         expect(SpiqSymbols.DOT);
 
-        return new VariableDeclarationNode(id, SpiqType.NUMBER);
+        return new VariableDeclarationNode(id, type);
     }
 }

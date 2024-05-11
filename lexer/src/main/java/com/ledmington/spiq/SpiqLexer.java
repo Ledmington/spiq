@@ -52,7 +52,10 @@ public final class SpiqLexer {
                             yield switch (token) {
                                 case "is" -> SpiqKeywords.IS;
                                 case "a" -> SpiqKeywords.A;
+                                case "an" -> SpiqKeywords.AN;
                                 case "number" -> SpiqKeywords.NUMBER;
+                                case "integer" -> SpiqKeywords.INTEGER;
+                                case "real" -> SpiqKeywords.REAL;
                                 default -> new SpiqID(token);
                             };
                         }

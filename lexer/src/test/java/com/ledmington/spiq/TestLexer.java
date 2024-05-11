@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,8 +28,14 @@ import org.junit.jupiter.params.provider.MethodSource;
 public final class TestLexer {
 
     private static Stream<Arguments> validSources() {
-        return Stream.of(Arguments.of(
-                "A is a number", List.of(new SpiqID("A"), SpiqKeywords.IS, SpiqKeywords.A, SpiqKeywords.NUMBER)));
+        final List<Arguments> keywords = Arrays.stream(SpiqKeywords.values())
+                .map(kw -> Arguments.of(kw.name().toLowerCase(Locale.US), List.of(kw)))
+                .toList();
+        return Stream.concat(
+                keywords.stream(),
+                Stream.of(Arguments.of(
+                        "A is a number",
+                        List.of(new SpiqID("A"), SpiqKeywords.IS, SpiqKeywords.A, SpiqKeywords.NUMBER))));
     }
 
     @ParameterizedTest

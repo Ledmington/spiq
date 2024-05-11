@@ -15,6 +15,10 @@ public final class UnexpectedTokenException extends SpiqParserException {
     @Serial
     private static final long serialVersionUID = -8022257077124614436L;
 
+    public UnexpectedTokenException(final SpiqToken token) {
+        super(String.format("Unexpected token '%s' was found.", token));
+    }
+
     public UnexpectedTokenException(final SpiqToken actual, final SpiqToken expected) {
         super(String.format("Expected token '%s' but '%s' was found.", expected, actual));
     }

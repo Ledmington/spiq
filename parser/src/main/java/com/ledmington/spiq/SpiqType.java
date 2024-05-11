@@ -9,5 +9,7 @@
 package com.ledmington.spiq;
 
 public enum SpiqType {
-    NUMBER
+    NUMBER,
+    INTEGER,
+    REAL
 }

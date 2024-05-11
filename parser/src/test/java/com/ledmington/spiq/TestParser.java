@@ -26,7 +26,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 public final class TestParser {
 
     private static Stream<Arguments> validSources() {
-        return Stream.of(Arguments.of("A is a number.", List.of(new VariableDeclarationNode("A", SpiqType.NUMBER))));
+        return Stream.of(
+                Arguments.of("A is a number.", List.of(new VariableDeclarationNode("A", SpiqType.NUMBER))),
+                Arguments.of("A is an integer.", List.of(new VariableDeclarationNode("A", SpiqType.INTEGER))),
+                Arguments.of("A is a real.", List.of(new VariableDeclarationNode("A", SpiqType.REAL))));
     }
 
     @ParameterizedTest
