@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -27,7 +26,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 public final class TestLexer {
 
     private static Stream<Arguments> validSources() {
-        return Stream.of(Arguments.of("A is a number", List.of()));
+        return Stream.of(Arguments.of(
+                "A is a number", List.of(new SpiqID("A"), SpiqKeywords.IS, SpiqKeywords.A, SpiqKeywords.NUMBER)));
     }
 
     @ParameterizedTest
@@ -41,15 +41,11 @@ public final class TestLexer {
             fail();
         }
         final Lexer lexer = new Lexer(testFile.toFile());
-        final List<SpiqToken> tokens = new ArrayList<>();
-        while (lexer.hasNext()) {
-            tokens.add(lexer.next());
-        }
-        assertEquals(expectedTokens, tokens);
+        assertEquals(expectedTokens, lexer.tokenize());
     }
 
     private static Stream<Arguments> invalidSources() {
-        return Stream.of("A is not a number").map(Arguments::of);
+        return Stream.of("@").map(Arguments::of);
     }
 
     @ParameterizedTest
@@ -63,10 +59,6 @@ public final class TestLexer {
             fail();
         }
         final Lexer lexer = new Lexer(testFile.toFile());
-        assertThrows(IllegalArgumentException.class, () -> {
-            while (lexer.hasNext()) {
-                lexer.next();
-            }
-        });
+        assertThrows(IllegalArgumentException.class, lexer::tokenize);
     }
 }

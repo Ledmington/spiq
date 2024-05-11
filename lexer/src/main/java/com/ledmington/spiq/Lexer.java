@@ -9,21 +9,56 @@
 package com.ledmington.spiq;
 
 import java.io.File;
-import java.util.Iterator;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public final class Lexer implements Iterator<SpiqToken> {
+public final class Lexer {
+
+    private final char[] v;
+    private int i = 0;
+    private final List<SpiqToken> tokens;
+
     public Lexer(final File file) {
-        Objects.requireNonNull(file);
+        try {
+            this.v = Files.readString(Objects.requireNonNull(file).toPath()).toCharArray();
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+        this.tokens = new ArrayList<>();
     }
 
-    @Override
-    public boolean hasNext() {
-        return false;
+    public List<SpiqToken> tokenize() {
+        while (i < v.length) {
+            skipBlanks();
+
+            if (i >= v.length) {
+                break;
+            }
+
+            final StringBuilder sb = new StringBuilder();
+            while (i < v.length && !Character.isWhitespace(v[i])) {
+                sb.append(v[i]);
+                i++;
+            }
+            final String token = sb.toString();
+            tokens.add(
+                    switch (token) {
+                        case "is" -> SpiqKeywords.IS;
+                        case "a" -> SpiqKeywords.A;
+                        case "number" -> SpiqKeywords.NUMBER;
+                        default -> new SpiqID(token);
+                    });
+        }
+
+        return tokens;
     }
 
-    @Override
-    public SpiqToken next() {
-        return null;
+    private void skipBlanks() {
+        while (i < v.length && Character.isWhitespace(v[i])) {
+            i++;
+        }
     }
 }
