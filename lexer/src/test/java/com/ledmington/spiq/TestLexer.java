@@ -8,4 +8,65 @@
  */
 package com.ledmington.spiq;
 
-public final class TestLexer {}
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+public final class TestLexer {
+
+    private static Stream<Arguments> validSources() {
+        return Stream.of(Arguments.of("A is a number", List.of()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("validSources")
+    public void correct(final String source, final List<SpiqToken> expectedTokens) {
+        Path testFile = null;
+        try {
+            testFile = Files.createTempFile("spiq-", "-test-source");
+            Files.writeString(testFile, source, StandardOpenOption.WRITE);
+        } catch (final IOException e) {
+            fail();
+        }
+        final Lexer lexer = new Lexer(testFile.toFile());
+        final List<SpiqToken> tokens = new ArrayList<>();
+        while (lexer.hasNext()) {
+            tokens.add(lexer.next());
+        }
+        assertEquals(expectedTokens, tokens);
+    }
+
+    private static Stream<Arguments> invalidSources() {
+        return Stream.of("A is not a number").map(Arguments::of);
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidSources")
+    public void invalid(final String source) {
+        Path testFile = null;
+        try {
+            testFile = Files.createTempFile("spiq-", "-test-source");
+            Files.writeString(testFile, source, StandardOpenOption.WRITE);
+        } catch (final IOException e) {
+            fail();
+        }
+        final Lexer lexer = new Lexer(testFile.toFile());
+        assertThrows(IllegalArgumentException.class, () -> {
+            while (lexer.hasNext()) {
+                lexer.next();
+            }
+        });
+    }
+}

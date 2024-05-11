@@ -8,4 +8,22 @@
  */
 package com.ledmington.spiq;
 
-public final class Lexer {}
+import java.io.File;
+import java.util.Iterator;
+import java.util.Objects;
+
+public final class Lexer implements Iterator<SpiqToken> {
+    public Lexer(final File file) {
+        Objects.requireNonNull(file);
+    }
+
+    @Override
+    public boolean hasNext() {
+        return false;
+    }
+
+    @Override
+    public SpiqToken next() {
+        return null;
+    }
+}
