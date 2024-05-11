@@ -10,16 +10,13 @@ package com.ledmington.spiq;
 
 import java.io.File;
 import java.io.IOException;
-
-import org.antlr.v4.runtime.CharStreams;
-
-import com.ledmington.spiq.interpreter.SpiqInterperter;
-import com.ledmington.spiq.utils.SpiqUtils;
+import java.nio.file.Files;
 
 public final class Spiq {
 
     public static void main(final String[] args) {
-        System.err.println(SpiqUtils.nlJoin(
+        System.err.println(String.join(
+                "\n",
                 "",
                 " ________  ________  ___  ________      ",
                 "|\\  _____\\|\\   __  \\|\\  \\|\\   __  \\     ",
@@ -40,9 +37,8 @@ public final class Spiq {
 
         System.out.println("Reading \"" + filename + "\"");
 
-        final SpiqInterperter compiler = new SpiqInterperter();
         try {
-            compiler.compile(CharStreams.fromFileName(new File(filename).getAbsolutePath()));
+            System.out.println(Files.readString(new File(filename).toPath()));
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }

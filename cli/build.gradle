@@ -1,6 +1,5 @@
 plugins {
 	id 'java'
-	id 'antlr'
 	id 'application'
 	id 'jacoco'
 	id 'com.adarshr.test-logger' version '4.0.0' // for pretty test logs
@@ -30,8 +29,6 @@ repositories {
 
 ext.junitVersion = "5.10.2"
 dependencies {
-	antlr 'org.antlr:antlr4:4.13.1'
-
 	testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
 	testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
 	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
@@ -58,12 +55,6 @@ test {
 
 application {
 	mainClass = mainClassName
-}
-
-generateGrammarSource {
-	outputDirectory = file("src/main/java/gen")
-	maxHeapSize = "64m"
-	arguments += ["-visitor", "-long-messages"]
 }
 
 test {
