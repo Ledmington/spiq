@@ -31,6 +31,12 @@ public final class NumberLiteral implements SpiqToken {
         this(BigDecimal.valueOf(value).stripTrailingZeros());
     }
 
+    public boolean isIntegral() {
+        return value.signum() == 0
+                || value.scale() <= 0
+                || value.stripTrailingZeros().scale() <= 0;
+    }
+
     @Override
     public String toString() {
         return "NumberLiteral(" + value + ")";

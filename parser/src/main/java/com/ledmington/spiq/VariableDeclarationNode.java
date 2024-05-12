@@ -14,18 +14,24 @@ public final class VariableDeclarationNode implements SpiqNode {
 
     private final String id;
     private final SpiqType type;
+    private final NumberLiteral value;
 
-    public VariableDeclarationNode(final String id, final SpiqType type) {
+    public VariableDeclarationNode(final String id, final SpiqType type, final NumberLiteral value) {
         this.id = Objects.requireNonNull(id);
         if (id.isEmpty() || id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be empty or blank.");
         }
         this.type = Objects.requireNonNull(type);
+        this.value = value;
+    }
+
+    public VariableDeclarationNode(final String id, final SpiqType type) {
+        this(id, type, null);
     }
 
     @Override
     public String toString() {
-        return "VariableDeclarationNode(id=" + id + ";type=" + type + ")";
+        return "VariableDeclarationNode(id=" + id + ";type=" + type + (value == null ? "" : ";value=" + value) + ")";
     }
 
     @Override
@@ -33,6 +39,7 @@ public final class VariableDeclarationNode implements SpiqNode {
         int h = 17;
         h = 31 * h + id.hashCode();
         h = 31 * h + type.hashCode();
+        h = 31 * h + (value == null ? 0 : value.hashCode());
         return h;
     }
 
@@ -48,6 +55,6 @@ public final class VariableDeclarationNode implements SpiqNode {
             return false;
         }
         final VariableDeclarationNode vdn = (VariableDeclarationNode) other;
-        return this.id.equals(vdn.id) && this.type.equals(vdn.type);
+        return this.id.equals(vdn.id) && this.type.equals(vdn.type) && Objects.equals(this.value, vdn.value);
     }
 }

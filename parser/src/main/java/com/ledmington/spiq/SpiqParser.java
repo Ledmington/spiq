@@ -47,6 +47,7 @@ public final class SpiqParser {
         i++;
 
         final SpiqType type;
+        NumberLiteral value = null;
 
         expect(SpiqKeywords.IS);
 
@@ -75,12 +76,20 @@ public final class SpiqParser {
             } else {
                 throw new UnexpectedTokenException(tokens[i]);
             }
+        } else if (tokens[i] instanceof NumberLiteral nl) {
+            i++;
+            if (nl.isIntegral()) {
+                type = SpiqType.INTEGER;
+            } else {
+                type = SpiqType.REAL;
+            }
+            value = nl;
         } else {
             throw new UnexpectedTokenException(tokens[i]);
         }
 
         expect(SpiqSymbols.DOT);
 
-        return new VariableDeclarationNode(id, type);
+        return new VariableDeclarationNode(id, type, value);
     }
 }

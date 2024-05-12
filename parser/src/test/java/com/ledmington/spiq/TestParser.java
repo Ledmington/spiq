@@ -30,7 +30,15 @@ public final class TestParser {
                 Arguments.of("A is a number.", List.of(new VariableDeclarationNode("A", SpiqType.NUMBER))),
                 Arguments.of("A is an integer.", List.of(new VariableDeclarationNode("A", SpiqType.INTEGER))),
                 Arguments.of("A is a real.", List.of(new VariableDeclarationNode("A", SpiqType.REAL))),
-                Arguments.of("A is a set.", List.of(new VariableDeclarationNode("A", SpiqType.SET))));
+                Arguments.of("A is a set.", List.of(new VariableDeclarationNode("A", SpiqType.SET))),
+                //
+                Arguments.of(
+                        "A is 5.", List.of(new VariableDeclarationNode("A", SpiqType.INTEGER, new NumberLiteral(5)))),
+                Arguments.of(
+                        "A is 5.3.", List.of(new VariableDeclarationNode("A", SpiqType.REAL, new NumberLiteral(5.3)))),
+                Arguments.of(
+                        "A is -1.2e-3.",
+                        List.of(new VariableDeclarationNode("A", SpiqType.REAL, new NumberLiteral(-1.2e-3)))));
     }
 
     @ParameterizedTest
