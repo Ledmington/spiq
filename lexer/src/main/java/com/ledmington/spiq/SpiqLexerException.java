@@ -10,12 +10,16 @@ package com.ledmington.spiq;
 
 import java.io.Serial;
 
-public final class SpiqLexerException extends RuntimeException {
+public class SpiqLexerException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 4724667804859234733L;
 
     public SpiqLexerException() {
         super("An unknown lexical error occurred.");
+    }
+
+    public SpiqLexerException(final String message) {
+        super(message);
     }
 }
