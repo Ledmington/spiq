@@ -11,5 +11,6 @@ package com.ledmington.spiq;
 public enum SpiqType {
     NUMBER,
     INTEGER,
-    REAL
+    REAL,
+    SET
 }

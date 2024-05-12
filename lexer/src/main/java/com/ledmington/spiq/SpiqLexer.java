@@ -56,6 +56,7 @@ public final class SpiqLexer {
                                 case "number" -> SpiqKeywords.NUMBER;
                                 case "integer" -> SpiqKeywords.INTEGER;
                                 case "real" -> SpiqKeywords.REAL;
+                                case "set" -> SpiqKeywords.SET;
                                 default -> new SpiqID(token);
                             };
                         }

@@ -52,14 +52,20 @@ public final class SpiqParser {
 
         if (tokens[i] == SpiqKeywords.A) {
             i++;
-            if (tokens[i] == SpiqKeywords.NUMBER) {
-                i++;
-                type = SpiqType.NUMBER;
-            } else if (tokens[i] == SpiqKeywords.REAL) {
-                i++;
-                type = SpiqType.REAL;
-            } else {
-                throw new UnexpectedTokenException(tokens[i]);
+            switch (tokens[i]) {
+                case SpiqKeywords.NUMBER -> {
+                    i++;
+                    type = SpiqType.NUMBER;
+                }
+                case SpiqKeywords.REAL -> {
+                    i++;
+                    type = SpiqType.REAL;
+                }
+                case SpiqKeywords.SET -> {
+                    i++;
+                    type = SpiqType.SET;
+                }
+                default -> throw new UnexpectedTokenException(tokens[i]);
             }
         } else if (tokens[i] == SpiqKeywords.AN) {
             i++;

@@ -14,5 +14,6 @@ public enum SpiqKeywords implements SpiqToken {
     AN,
     NUMBER,
     INTEGER,
-    REAL
+    REAL,
+    SET
 }
