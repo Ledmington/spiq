@@ -8,8 +8,12 @@ plugins {
 	id 'de.undercouch.download' version '5.6.0' // for downloading files in tasks
 }
 
+repositories {
+	mavenCentral()
+}
+
 group 'com.ledmington.spiq'
-version '0.1.0'
+String version = '0.1.0'
 String author = 'Filippo Barbari'
 String authorMail = 'filippo.barbari@gmail.com'
 String appName = 'spiq'
@@ -18,10 +22,6 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
-}
-
-repositories {
-	mavenCentral()
 }
 
 ext.junitVersion = "5.10.2"

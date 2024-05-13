@@ -8,14 +8,27 @@ plugins {
 	id 'de.undercouch.download' version '5.6.0' // for downloading files in tasks
 }
 
+repositories {
+	mavenCentral()
+}
+
+static def path(String... args) {
+	return String.join(File.separator, args)
+}
+
+
 group 'com.ledmington.spiq'
-version '0.1.0'
+String version = '0.1.0'
 description 'spiq interpreter'
 String author = 'Filippo Barbari'
 String authorMail = 'filippo.barbari@gmail.com'
 String appName = 'spiq'
 String appNameLowercase = 'spiq'
-String mainClassName = "${group}.Spiq"
+String fatJarBaseName = "spiq-cli-v${version}"
+String fatJarName = "${fatJarBaseName}.jar"
+String fatJarPath = path("${project.layout.buildDirectory.get()}", "libs", "${fatJarName}")
+String basePackage = "com.ledmington"
+String mainClassName = "${basePackage}.spiq.cli.Main"
 
 java {
 	toolchain {
@@ -23,12 +36,10 @@ java {
 	}
 }
 
-repositories {
-	mavenCentral()
-}
-
 ext.junitVersion = "5.10.2"
 dependencies {
+	implementation project(':parser')
+
 	testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
 	testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
 	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
@@ -44,7 +55,7 @@ compileJava {
 
 javadoc {
 	failOnError = true
-	title "spiq-v${version}"
+	title "spiq-cli-v${version}"
 	// options.addBooleanOption('Werror', true)
 }
 
@@ -130,7 +141,6 @@ spotless {
 	}
 }
 
-String fatJarName = "${project.layout.getBuildDirectory().asFile}/libs/${appNameLowercase}-${version}.jar"
 tasks.register('fatJar', Jar) {
 	group 'distribution'
 	description 'Builds the fat jar of the application'
@@ -141,17 +151,18 @@ tasks.register('fatJar', Jar) {
 	}
 	duplicatesStrategy = 'include'
 	manifest {
-		archiveBaseName = appNameLowercase
+		archiveBaseName = fatJarBaseName
 		attributes(
 				//"Implementation-Title": "Gradle",
 				"Implementation-Version": version,
 				"Main-Class": "$mainClassName"
 		)
 	}
+	archiveBaseName = "${fatJarBaseName}"
 
 	doLast {
-		println "The fat jar is ${fatJarName}"
-		println String.format("Fat jar size: %.3f MB", new File(fatJarName).length() / 1_000_000L)
+		println "The fat jar is ${fatJarPath}"
+		println String.format("Fat jar size: %.3f MB", (double) new File(fatJarPath).length() / 1_000_000.0)
 	}
 }
 
