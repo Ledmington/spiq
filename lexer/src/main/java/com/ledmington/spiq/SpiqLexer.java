@@ -21,6 +21,11 @@ public final class SpiqLexer {
     private int i = 0;
     private final List<SpiqToken> tokens;
 
+    public SpiqLexer(final String source) {
+        this.v = Objects.requireNonNull(source).toCharArray();
+        this.tokens = new ArrayList<>();
+    }
+
     public SpiqLexer(final File file) {
         try {
             this.v = Files.readString(Objects.requireNonNull(file).toPath()).toCharArray();
@@ -45,7 +50,7 @@ public final class SpiqLexer {
                 tokens.add(parseNumberLiteral());
             } else {
                 final StringBuilder sb = new StringBuilder();
-                while (i < v.length && Character.isAlphabetic(v[i])) {
+                while (i < v.length && isAlphabetic(v[i])) {
                     sb.append(v[i]);
                     i++;
                 }
@@ -75,7 +80,10 @@ public final class SpiqLexer {
             i++;
         }
 
-        readDigits(sb);
+        while (i < v.length && isDigit(v[i])) {
+            sb.append(v[i]);
+            i++;
+        }
 
         if (i < v.length && v[i] == '.') {
             sb.append(v[i]);
@@ -102,7 +110,10 @@ public final class SpiqLexer {
     }
 
     private void readDigits(final StringBuilder sb) {
-        while (i < v.length && isDigit(v[i])) {
+        while (i < v.length) {
+            if (!isDigit(v[i])) {
+                throw new SpiqLexerException(String.format("Lexical error: expected a digit but was %c", v[i]));
+            }
             sb.append(v[i]);
             i++;
         }
@@ -112,6 +123,10 @@ public final class SpiqLexer {
         while (i < v.length && isWhitespace(v[i])) {
             i++;
         }
+    }
+
+    private boolean isAlphabetic(final char ch) {
+        return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
     }
 
     private boolean isDigit(final char ch) {

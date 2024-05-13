@@ -18,6 +18,11 @@ public final class SpiqParser {
     private int i = 0;
     private final List<SpiqNode> nodes;
 
+    public SpiqParser(final String source) {
+        this.tokens = new SpiqLexer(source).tokenize().toArray(new SpiqToken[0]);
+        this.nodes = new ArrayList<>();
+    }
+
     public SpiqParser(final File file) {
         this.tokens = new SpiqLexer(file).tokenize().toArray(new SpiqToken[0]);
         this.nodes = new ArrayList<>();
@@ -32,7 +37,7 @@ public final class SpiqParser {
     }
 
     private void expect(final SpiqToken expected) {
-        if (i < tokens.length && tokens[i] != expected) {
+        if (i < tokens.length && !tokens[i].equals(expected)) {
             throw new UnexpectedTokenException(tokens[i], expected);
         }
         i++;
@@ -87,8 +92,6 @@ public final class SpiqParser {
         } else {
             throw new UnexpectedTokenException(tokens[i]);
         }
-
-        expect(SpiqSymbols.DOT);
 
         return new VariableDeclarationNode(id, type, value);
     }
