@@ -9,5 +9,16 @@
 package com.ledmington.spiq;
 
 public enum SpiqSymbols implements SpiqToken {
-    DOT
+    NEWLINE('\n'),
+    DOT('.');
+
+    private final char repr;
+
+    SpiqSymbols(final char repr) {
+        this.repr = repr;
+    }
+
+    public String repr() {
+        return "" + repr;
+    }
 }

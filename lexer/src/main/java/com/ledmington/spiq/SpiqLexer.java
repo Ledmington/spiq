@@ -46,9 +46,12 @@ public final class SpiqLexer {
             if (v[i] == '.') {
                 tokens.add(SpiqSymbols.DOT);
                 i++;
+            } else if (v[i] == '\n') {
+                tokens.add(SpiqSymbols.NEWLINE);
+                i++;
             } else if (isDigit(v[i]) || v[i] == '-' || v[i] == '+') {
                 tokens.add(parseNumberLiteral());
-            } else {
+            } else if (isAlphabetic(v[i])) {
                 final StringBuilder sb = new StringBuilder();
                 while (i < v.length && isAlphabetic(v[i])) {
                     sb.append(v[i]);
@@ -67,6 +70,8 @@ public final class SpiqLexer {
                             case "set" -> SpiqKeywords.SET;
                             default -> new SpiqID(token);
                         });
+            } else {
+                throw new SpiqLexerException(String.format("Invalid character '%c'.", v[i]));
             }
         }
 
@@ -89,7 +94,10 @@ public final class SpiqLexer {
             sb.append(v[i]);
             i++;
 
-            readDigits(sb);
+            while (i < v.length && isDigit(v[i])) {
+                sb.append(v[i]);
+                i++;
+            }
         }
 
         if (i < v.length && v[i] == 'e') {
@@ -138,7 +146,7 @@ public final class SpiqLexer {
 
     private boolean isWhitespace(final char ch) {
         return switch (ch) {
-            case ' ', '\t', '\n', '\r' -> true;
+            case ' ', '\t', '\r' -> true;
             default -> false;
         };
     }

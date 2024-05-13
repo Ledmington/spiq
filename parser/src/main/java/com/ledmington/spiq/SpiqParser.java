@@ -93,6 +93,10 @@ public final class SpiqParser {
             throw new UnexpectedTokenException(tokens[i]);
         }
 
-        return new VariableDeclarationNode(id, type, value);
+        if (i < tokens.length && tokens[i] != SpiqSymbols.NEWLINE) {
+            throw new InvalidDeclaration(id, type, value);
+        }
+
+        return new NumberDeclarationNode(id, type, value);
     }
 }

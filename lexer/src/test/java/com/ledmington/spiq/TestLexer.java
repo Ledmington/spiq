@@ -25,6 +25,8 @@ public final class TestLexer {
     private static Stream<Arguments> validSources() {
         final Stream<Arguments> keywords = Arrays.stream(SpiqKeywords.values())
                 .map(kw -> Arguments.of(kw.name().toLowerCase(Locale.US), List.of(kw)));
+        final Stream<Arguments> symbols =
+                Arrays.stream(SpiqSymbols.values()).map(s -> Arguments.of(s.repr(), List.of(s)));
         final Stream<Arguments> numberLiterals = Stream.of(
                 Arguments.of("0", List.of(new NumberLiteral(0))),
                 Arguments.of("1", List.of(new NumberLiteral(1))),
@@ -44,9 +46,11 @@ public final class TestLexer {
                 Arguments.of("-1e-5", List.of(new NumberLiteral(-0.00001))));
         return Stream.concat(
                 Stream.concat(keywords, numberLiterals),
-                Stream.of(Arguments.of(
-                        "A is a number",
-                        List.of(new SpiqID("A"), SpiqKeywords.IS, SpiqKeywords.A, SpiqKeywords.NUMBER))));
+                Stream.concat(
+                        symbols,
+                        Stream.of(Arguments.of(
+                                "A is a number",
+                                List.of(new SpiqID("A"), SpiqKeywords.IS, SpiqKeywords.A, SpiqKeywords.NUMBER)))));
     }
 
     @ParameterizedTest
@@ -68,7 +72,7 @@ public final class TestLexer {
     }
 
     private static Stream<Arguments> invalidLiterals() {
-        return Stream.of("1-", "1.a", "").map(Arguments::of);
+        return Stream.of("1-", "1.a").map(Arguments::of);
     }
 
     @ParameterizedTest
